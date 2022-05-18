@@ -1,0 +1,31 @@
+WITH T1 AS
+(
+	select
+	cust as customer,
+	min(quant) as min_q,
+	max(quant) as max_q,
+	round(avg(quant),0) as avg_q 
+	from sales
+	group by customer
+),	
+T2 AS
+(
+	SELECT 
+	T1.CUSTOMER,T1.MIN_Q,
+	S.PROD AS MIN_PROD,
+	S.DATE AS MIN_DATE,
+	S.STATE AS ST,
+	T1.MAX_Q,T1.AVG_Q
+	FROM T1,SALES AS S
+	WHERE T1.CUSTOMER = S.CUST
+	AND T1.MIN_Q = S.QUANT
+)
+SELECT
+T2.CUSTOMER,T2.MIN_Q,T2.MIN_PROD,T2.MIN_DATE,T2.ST,T2.MAX_Q,
+S.PROD AS MAX_PROD,
+S.DATE AS MAX_DATE,
+S.STATE AS ST,
+T2.AVG_Q
+FROM T2,SALES AS S
+WHERE T2.CUSTOMER = S.CUST
+AND T2.MAX_Q = S.QUANT
